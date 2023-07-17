@@ -25,4 +25,13 @@ curl localhost:4000/v1/books
 
 #add new item
 curl -X POST localhost:4000/v1/books
+
+#get item
+curl localhost:4000/v1/books/125
+
+#update item
+curl -X PUT localhost:4000/v1/books/125
+
+#delete item
+curl -X DELETE localhost:4000/v1/books/125
 ```
