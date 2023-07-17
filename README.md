@@ -13,7 +13,7 @@ go run ./cmd/api
 curl localhost:4000/v1/healthcheck
 ```
 
-# testing healthcheck
+# testing healthcheck correct method
 ```bash
 curl -X POST localhost:4000/v1/healthcheck
 ```
