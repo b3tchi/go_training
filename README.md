@@ -12,3 +12,9 @@ go run ./cmd/api
 ```bash
 curl localhost:4000/v1/healthcheck
 ```
+
+# testing healthcheck
+```bash
+curl -X POST localhost:4000/v1/healthcheck
+```
+
