@@ -18,3 +18,11 @@ curl localhost:4000/v1/healthcheck
 curl -X POST localhost:4000/v1/healthcheck
 ```
 
+# testing books api
+```bash
+#get collection
+curl localhost:4000/v1/books
+
+#add new item
+curl -X POST localhost:4000/v1/books
+```
