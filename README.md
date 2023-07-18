@@ -31,7 +31,8 @@ curl -i -d "$BODY" -X POST localhost:4000/v1/books
 curl localhost:4000/v1/books/125
 
 #update item
-curl -X PUT localhost:4000/v1/books/125
+BODY='{"title":"The Black Soulstone","published":2001,"pages":107,"genres":["Fiction","Mystery"],"rating":3.5}'
+curl -i -d "$BODY" -X PUT localhost:4000/v1/books/125
 
 #delete item
 curl -X DELETE localhost:4000/v1/books/125
