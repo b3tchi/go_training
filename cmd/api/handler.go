@@ -74,7 +74,7 @@ func (app *application) getCreateBooksHandler(w http.ResponseWriter, r *http.Req
 			return
 		}
 
-		fmt.Fprint(w, "%v\n", input)
+		fmt.Fprintf(w, "%v\n", input)
 	}
 }
 
