@@ -22,16 +22,10 @@ func (app *application) healthcheck(w http.ResponseWriter, r *http.Request) {
 		"version":    version,
 	}
 
-	js, err := json.MarshalIndent(data, "", "\t")
-	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+	if err := app.writeJSON(w, http.StatusOK, envelope{"healthcheck": data}); err != nil {
+		http.Error(w, http.StatusText(http.StatusInsufficientStorage), http.StatusInternalServerError)
 		return
 	}
-
-	js = append(js, '\n')
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
 }
 
 func (app *application) getCreateBooksHandler(w http.ResponseWriter, r *http.Request) {
