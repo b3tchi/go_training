@@ -24,7 +24,8 @@ curl -X POST localhost:4000/v1/healthcheck
 curl localhost:4000/v1/books
 
 #add new item
-curl -X POST localhost:4000/v1/books
+BODY='{"title":"The Black Soulstone","published":2001,"pages":107,"genres":["Fiction","Mystery"],"rating":3.5}'
+curl -i -d "$BODY" -X POST localhost:4000/v1/books
 
 #get item
 curl localhost:4000/v1/books/125
