@@ -89,7 +89,7 @@ func (app *application) getBook(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 	}
-	fmt.Fprintf(w, "Display the details of book with ID: %d", id)
+
 	book := data.Book{
 		ID:        id,
 		CreatedAt: time.Now(),
