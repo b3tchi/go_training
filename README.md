@@ -3,8 +3,20 @@
 go mod init web-test 
 ```
 
+# install external database dependency
+```bash
+go get github.com/lib/pq
+```
+
 # starting server
 ```bash
+#run local db server
+docker run --name web-hello -e POSTGRES_PASSWORD=mylocalpass -d -p 5432:5432 postgres
+
+#export db connection
+export WEBHELLO_DB_DSN="postgres://webhello:pass@localhost/webhello?sslmode=disable"
+
+#start web server
 go run ./cmd/api
 ```
 
@@ -68,7 +80,7 @@ docker image rm -f postgres
 sudo apt-get install -y postgresql-client
 ```
 
-```postgreSQL
+```sql
 CREATE DATABASE webhello;
 CREATE ROLE webhello WITH LOGIN PASSWORD 'pass';
 \c webhello
