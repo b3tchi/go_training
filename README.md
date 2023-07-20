@@ -11,7 +11,7 @@ go get github.com/lib/pq
 # starting server
 ```bash
 #run local db server
-docker run --name web-hello -e POSTGRES_PASSWORD=mylocalpass -d -p 5432:5432 postgres
+docker start --name web-hello -e POSTGRES_PASSWORD=mylocalpass -d -p 5432:5432 postgres
 
 #export db connection
 export WEBHELLO_DB_DSN="postgres://webhello:pass@localhost/webhello?sslmode=disable"
