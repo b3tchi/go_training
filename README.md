@@ -122,8 +122,8 @@ dlv debug ./cmd/api --headless --listen=:12345 --api-version=2 --accept-multicli
 ```
 
 ## connecting vscode to remote session 
-noted for vscode
-[https://github.com/golang/vscode-go/blob/master/docs/debugging.md#remote-debugging](https://github.com/golang/vscode-go/blob/master/docs/debugging.md#remote-debugging)
+notes for vscode
+[documentation vscode-go](https://github.com/golang/vscode-go/blob/master/docs/debugging.md#remote-debugging)
 launch.json in folder ./.vscode/launch.json for attach to the session
 ```json
 {
@@ -141,7 +141,8 @@ launch.json in folder ./.vscode/launch.json for attach to the session
 }
 ```
 
-## connectiong neovim to remote session with nvim-dap
+## connecting neovim to remote session with nvim-dap
+[documentation nvim-dap](https://github.com/mfussenegger/nvim-dap/wiki/Debug-Adapter-installation#go-using-delve-directly)
 ```lua
 require("dap").adapters.delve = {
 	type = "server",
