@@ -38,10 +38,6 @@ func main() {
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
-	app := &application{
-		config: cfg,
-		logger: logger,
-	}
 	db, err := sql.Open("postgres", cfg.dsn)
 	if err != nil {
 		logger.Fatal(err)
@@ -55,6 +51,12 @@ func main() {
 	}
 
 	logger.Print("database connection pool estabilished")
+
+	app := &application{
+		config: cfg,
+		logger: logger,
+		models: data.NewModels(db),
+	}
 
 	addr := fmt.Sprintf(":%d", cfg.port)
 

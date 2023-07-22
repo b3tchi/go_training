@@ -123,10 +123,10 @@ func (b BookModel) Delete(id int64) error {
 		return errors.New("record not found")
 	}
 	query := `
-  DELETE 
-    FROM books
-   WHERE id = $1
-  `
+	 DELETE
+	   FROM books
+	  WHERE id = $1
+	 `
 	results, err := b.DB.Exec(query, id)
 	if err != nil {
 		return err

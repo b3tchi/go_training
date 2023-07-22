@@ -39,7 +39,6 @@ func (app *application) getCreateBooksHandler(w http.ResponseWriter, r *http.Req
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 			return
 		}
-
 	}
 
 	if r.Method == http.MethodPost {
@@ -72,7 +71,7 @@ func (app *application) getCreateBooksHandler(w http.ResponseWriter, r *http.Req
 		}
 
 		headers := make(http.Header)
-		headers.Set("Location", fmt.Sprint("v1/books/%d", book.ID))
+		headers.Set("Location", fmt.Sprintf("v1/books/%d", book.ID))
 
 		err = app.writeJSON(w, http.StatusCreated, envelope{"book": book}, headers)
 		if err != nil {
@@ -93,6 +92,7 @@ func (app *application) getUpdateDeleteBooksHandler(w http.ResponseWriter, r *ht
 		app.deleteBook(w, r)
 	default:
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		return
 	}
 }
 
@@ -101,6 +101,7 @@ func (app *application) getBook(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
 	}
 
 	book, err := app.models.Books.Get(id)
@@ -108,8 +109,10 @@ func (app *application) getBook(w http.ResponseWriter, r *http.Request) {
 		switch {
 		case errors.Is(err, errors.New("record not found")):
 			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+			return
 		default:
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+			return
 		}
 	}
 	if err := app.writeJSON(w, http.StatusOK, envelope{"book": book}, nil); err != nil {
@@ -123,6 +126,7 @@ func (app *application) updateBook(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
+		return
 	}
 
 	book, err := app.models.Books.Get(id)
@@ -133,6 +137,7 @@ func (app *application) updateBook(w http.ResponseWriter, r *http.Request) {
 		default:
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		}
+		return
 	}
 
 	var input struct {
@@ -182,6 +187,7 @@ func (app *application) deleteBook(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
 	}
 
 	err = app.models.Books.Delete(id)
@@ -192,6 +198,7 @@ func (app *application) deleteBook(w http.ResponseWriter, r *http.Request) {
 		default:
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		}
+		return
 	}
 	err = app.writeJSON(w, http.StatusOK, envelope{"message": "book succesfully deleted"}, nil)
 	if err != nil {
