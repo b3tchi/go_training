@@ -1,14 +1,16 @@
-# initiating go project
+# Preparation 
+## initiating go project
 ```bash
 go mod init web-test 
 ```
 
-# install external database dependency
+## install external database dependency
 ```bash
 go get github.com/lib/pq
 ```
 
-# starting server
+# Running
+## starting server
 ```bash
 #run local db server
 docker start web-hello
@@ -20,17 +22,18 @@ export WEBHELLO_DB_DSN="postgres://webhello:pass@localhost/webhello?sslmode=disa
 go run ./cmd/api
 ```
 
-# testing healthcheck
+# Tests
+## testing healthcheck
 ```bash
 curl localhost:4000/v1/healthcheck
 ```
 
-# testing healthcheck correct method
+## testing healthcheck correct method
 ```bash
 curl -X POST localhost:4000/v1/healthcheck
 ```
 
-# testing books api
+## testing books api
 ```bash
 #get collection
 curl localhost:4000/v1/books
@@ -51,7 +54,8 @@ curl -X DELETE localhost:4000/v1/books/125
 ```
 
 
-# preparing postgreSQL on local machine
+# Database
+## preparing postgreSQL on local machine
 ```bash
 #pull latest pastge image
 docker pull postgres
@@ -68,18 +72,19 @@ docker ps
 psql -h localhost -p 5432 -U postgres
 ```
 
-# cleanup docker
+## cleanup docker
 ```bash
 docker stop web-hello
 docker rm web-hello
 docker image rm -f postgres
 ```
 
-# install psql client(ubuntu)
+## install psql client(ubuntu)
 ```bash
 sudo apt-get install -y postgresql-client
 ```
 
+## prepare db structure
 ```sql
 CREATE DATABASE webhello;
 CREATE ROLE webhello WITH LOGIN PASSWORD 'pass';
@@ -99,4 +104,57 @@ CREATE TABLE IF NOT EXISTS books (
 
 GRANT SELECT, INSERT, UPDATE, DELETE ON books TO webhello;
 GRANT USAGE, SELECT ON SEQUENCE books_id_seq TO webhello;
+```
+
+# Go Remote Debugging
+## installing delve debugger for go
+```bash
+go install github.com/go-delve/delve/cmd/dlv@latest
+```
+
+## start remote session
+```bash
+# wait for debugger
+dlv debug ./cmd/api --headless --listen=:12345 --api-version=2 --accept-multiclient
+
+# start the procedure --continue flag
+dlv debug ./cmd/api --headless --listen=:12345 --api-version=2 --accept-multiclient --continue
+```
+
+## connecting vscode to remote session 
+noted for vscode
+[https://github.com/golang/vscode-go/blob/master/docs/debugging.md#remote-debugging](https://github.com/golang/vscode-go/blob/master/docs/debugging.md#remote-debugging)
+launch.json in folder ./.vscode/launch.json for attach to the session
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Connect to external session",
+      "type": "go",
+      "debugAdapter": "dlv-dap",
+      "request": "attach",
+      "mode": "remote",
+      "port": 12345
+    }
+  ]
+}
+```
+
+## connectiong neovim to remote session with nvim-dap
+```lua
+require("dap").adapters.delve = {
+	type = "server",
+	host = "127.0.0.1",
+	port = "12345",
+}
+
+require("dap").configurations.go = {
+	{
+		type = "delve",
+		name = "Attach remote v2",
+		mode = "remote",
+		request = "attach",
+	},
+}
 ```
