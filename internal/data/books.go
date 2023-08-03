@@ -59,8 +59,8 @@ func (b BookModel) GetAll() ([]*Book, error) {
 
 func (b BookModel) Insert(book *Book) error {
 	query := `
-  INSERT INTO books (title, published, genres, rating)
-  VALUES ($1, $2, $3,$4,$5)
+  INSERT INTO books (title, published, pages, genres, rating)
+  VALUES ($1, $2, $3, $4, $5)
   RETURNING id, created_at, version
   `
 
