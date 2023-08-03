@@ -15,7 +15,7 @@ go get github.com/lib/pq
 #run local db server
 docker start web-hello
 
-#export db connection
+#export db connection for the web server
 export WEBHELLO_DB_DSN="postgres://webhello:pass@localhost/webhello?sslmode=disable"
 
 #start web server
@@ -25,34 +25,65 @@ go run ./cmd/api
 # Tests
 ## testing healthcheck
 ```bash
-curl localhost:4000/v1/healthcheck
+curl -i localhost:4000/v1/healthcheck
 ```
 
 ## testing healthcheck correct method
 ```bash
-curl -X POST localhost:4000/v1/healthcheck
+curl -i -X POST localhost:4000/v1/healthcheck
 ```
 
 ## testing books api
+
+### Create
 ```bash
-#get collection
-curl localhost:4000/v1/books
-
 #add new item
-BODY='{"title":"The Black Soulstone","published":2001,"pages":107,"genres":["Fiction","Mystery"],"rating":3.5}'
+BODY=$(jo \
+  title="The Black Soulstone" \
+  published=2001 \
+  pages=107 \
+  genres=$(jo -a Fiction Mystery) \
+  rating=3.5 \
+)
+
 curl -i -d "$BODY" -X POST localhost:4000/v1/books
+```
 
+### Read
+```bash
 #get item
-curl localhost:4000/v1/books/125
+curl -i localhost:4000/v1/books/1
+```
 
-#update item
-BODY='{"title":"The Black Soulstone","published":2001,"pages":107,"genres":["Fiction","Mystery"],"rating":3.5}'
-curl -i -d "$BODY" -X PUT localhost:4000/v1/books/125
+```bash
+#get item
+curl -i localhost:4000/v1/books/125
+```
 
-#delete item
+## Update
+```bash
+BODY=$(jo \
+  title="The Black Soulstone" \
+  published=2005 \
+  pages=207 \
+  genres=$(jo -a Mystery Sci-Fi) \
+  rating=4.5 \
+)
+
+curl -i -d "$BODY" -X PUT localhost:4000/v1/books/1
+```
+
+## Delete
+```bash
+# delete item
 curl -X DELETE localhost:4000/v1/books/125
 ```
 
+### Read All
+```bash
+#get collection
+curl localhost:4000/v1/books
+```
 
 # Database
 ## preparing postgreSQL on local machine
