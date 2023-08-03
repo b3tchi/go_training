@@ -60,7 +60,7 @@ curl -i localhost:4000/v1/books/1
 curl -i localhost:4000/v1/books/125
 ```
 
-## Update
+### Update
 ```bash
 BODY=$(jo \
   title="The Black Soulstone" \
@@ -73,7 +73,7 @@ BODY=$(jo \
 curl -i -d "$BODY" -X PUT localhost:4000/v1/books/1
 ```
 
-## Delete
+### Delete
 ```bash
 # delete item
 curl -X DELETE localhost:4000/v1/books/125
