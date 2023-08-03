@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -107,7 +106,7 @@ func (app *application) getBook(w http.ResponseWriter, r *http.Request) {
 	book, err := app.models.Books.Get(id)
 	if err != nil {
 		switch {
-		case errors.Is(err, errors.New("record not found")):
+		case err.Error() == "record not found":
 			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 			return
 		default:
@@ -132,7 +131,7 @@ func (app *application) updateBook(w http.ResponseWriter, r *http.Request) {
 	book, err := app.models.Books.Get(id)
 	if err != nil {
 		switch {
-		case errors.Is(err, errors.New("record not found")):
+		case err.Error() == "record not found":
 			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		default:
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -193,7 +192,7 @@ func (app *application) deleteBook(w http.ResponseWriter, r *http.Request) {
 	err = app.models.Books.Delete(id)
 	if err != nil {
 		switch {
-		case errors.Is(err, errors.New("record not found")):
+		case err.Error() == "record not found":
 			http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 		default:
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
