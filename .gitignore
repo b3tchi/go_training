@@ -1,2 +1,7 @@
+#go local settings
 go.sum
+#vscode custom local settings
 .vscode
+#delv debug locals binaries
+__debug_bin*
+
