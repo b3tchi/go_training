@@ -38,6 +38,7 @@ curl -i -X POST localhost:4000/v1/healthcheck
 ### Create
 ```bash
 #add new item
+HEADER="Content-Type: application/json"
 BODY=$(jo \
   title="The Black Soulstone" \
   published=2001 \
@@ -46,7 +47,8 @@ BODY=$(jo \
   rating=3.5 \
 )
 
-curl -i -d "$BODY" -X POST localhost:4000/v1/books
+echo $BODY
+curl -i -H "$HEADER" -d "$BODY" -X POST localhost:4000/v1/books
 ```
 
 ### Read
@@ -62,21 +64,27 @@ curl -i localhost:4000/v1/books/125
 
 ### Update
 ```bash
+HEADER="Content-Type: application/json"
 BODY=$(jo \
   title="The Black Soulstone" \
-  published=2005 \
+  published=2015 \
   pages=207 \
   genres=$(jo -a Mystery Sci-Fi) \
   rating=4.5 \
 )
 
-curl -i -d "$BODY" -X PUT localhost:4000/v1/books/1
+curl -i -H "$HEADER" -d "$BODY" -X PUT localhost:4000/v1/books/1
 ```
 
 ### Delete
 ```bash
 # delete item
 curl -X DELETE localhost:4000/v1/books/125
+
+lastid=$(curl localhost:4000/v1/books | jq '.data[-1].id')
+
+curl -X DELETE localhost:4000/v1/books/$lastid
+
 ```
 
 ### Read All
