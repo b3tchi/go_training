@@ -8,20 +8,25 @@ import (
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 
-	"web-hello/internal/data"
+	d "web-hello/internal/data"
 )
 
 // Declare output port type.
 func (app *application) Healthcheck() usecase.Interactor {
-	u := usecase.NewInteractor(func(_ context.Context, _ struct{}, output *envelope) error {
-		data := map[string]string{
-			"status":     "available",
-			"enviroment": app.config.env,
-			"version":    version,
+	type checkState struct {
+		Status      string `json:"status"`
+		Environment string `json:"environment"`
+		Version     string `json:"version"`
+	}
+
+	u := usecase.NewInteractor(func(_ context.Context, _ struct{}, output *checkState) error {
+		data := checkState{
+			Status:      "available",
+			Environment: app.config.env,
+			Version:     version,
 		}
 
-		*output = envelope{"healthcheck": data}
-
+		*output = data
 		return nil
 	})
 	u.SetTags("Health Check")
@@ -29,13 +34,13 @@ func (app *application) Healthcheck() usecase.Interactor {
 }
 
 func (app *application) GetBooks() usecase.Interactor {
-	u := usecase.NewInteractor(func(_ context.Context, _ struct{}, output *envelope) error {
+	u := usecase.NewInteractor(func(_ context.Context, _ struct{}, output *[]*d.Book) error {
 		books, err := app.models.Books.GetAll()
 		if err != nil {
 			return status.Internal
 		}
 
-		*output = envelope{"data": books}
+		*output = books
 		return nil
 	})
 	u.SetTags("Books")
@@ -51,8 +56,8 @@ func (app *application) CreateBook() usecase.Interactor {
 		Rating    float32  `json:"Rating"`
 	}
 
-	u := usecase.NewInteractor(func(_ context.Context, input newBook, output *envelope) error {
-		book := &data.Book{
+	u := usecase.NewInteractor(func(_ context.Context, input newBook, output *d.Book) error {
+		book := &d.Book{
 			Title:     input.Title,
 			Published: input.Published,
 			Pages:     input.Pages,
@@ -65,7 +70,8 @@ func (app *application) CreateBook() usecase.Interactor {
 			return status.Internal
 		}
 
-		*output = envelope{"data": book}
+		// *output = envelope{"data": book}
+		*output = *book
 		return nil
 	})
 
@@ -79,7 +85,7 @@ func (app *application) ReadBook() usecase.Interactor {
 	type getBookID struct {
 		ID string `path:"id"`
 	}
-	u := usecase.NewInteractor(func(_ context.Context, input getBookID, output *envelope) error {
+	u := usecase.NewInteractor(func(_ context.Context, input getBookID, output *d.Book) error {
 		id, err := strconv.ParseInt(input.ID, 10, 64)
 		if err != nil {
 			return status.Wrap(errors.New("bad request"), status.Unavailable)
@@ -94,7 +100,8 @@ func (app *application) ReadBook() usecase.Interactor {
 			}
 		}
 
-		*output = envelope{"data": book}
+		// *output = envelope{"data": book}
+		*output = *book
 		return nil
 	})
 	u.SetTags("Book")
@@ -110,7 +117,7 @@ func (app *application) UpdateBook() usecase.Interactor {
 		ID        string   `path:"id"`
 		Genres    []string `json:"genres"`
 	}
-	u := usecase.NewInteractor(func(_ context.Context, input updateBook, output *envelope) error {
+	u := usecase.NewInteractor(func(_ context.Context, input updateBook, output *d.Book) error {
 		id, err := strconv.ParseInt(input.ID, 10, 64)
 		if err != nil {
 			return status.Wrap(errors.New("bad request"), status.Unavailable)
@@ -147,7 +154,7 @@ func (app *application) UpdateBook() usecase.Interactor {
 			return status.Internal
 		}
 
-		*output = envelope{"data": book}
+		*output = *book
 		return nil
 	})
 	u.SetTags("Book")
@@ -155,10 +162,13 @@ func (app *application) UpdateBook() usecase.Interactor {
 }
 
 func (app *application) DeleteBook() usecase.Interactor {
-	type deleteBookID struct {
+	type DeleteBookID struct {
 		ID string `path:"id"`
 	}
-	u := usecase.NewInteractor(func(_ context.Context, input deleteBookID, output *envelope) error {
+	type DeleteConfirm struct {
+		Message string `json:"message"`
+	}
+	u := usecase.NewInteractor(func(_ context.Context, input DeleteBookID, output *DeleteConfirm) error {
 		id, err := strconv.ParseInt(input.ID, 10, 64)
 		if err != nil {
 			return status.Internal
@@ -173,7 +183,8 @@ func (app *application) DeleteBook() usecase.Interactor {
 				return status.Internal
 			}
 		}
-		*output = envelope{"message": "book succesfully deleted"}
+
+		*output = DeleteConfirm{Message: "succesfully deleted"}
 
 		return nil
 	})

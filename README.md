@@ -53,8 +53,10 @@ curl -i -H "$HEADER" -d "$BODY" -X POST localhost:4000/v1/books
 
 ### Read
 ```bash
+lastid=$(curl localhost:4000/v1/books | jq '.[-1].id')
+
 #get item
-curl -i localhost:4000/v1/books/1
+curl -i localhost:4000/v1/books/$lastid
 ```
 
 ```bash
@@ -73,18 +75,23 @@ BODY=$(jo \
   rating=4.5 \
 )
 
-curl -i -H "$HEADER" -d "$BODY" -X PUT localhost:4000/v1/books/1
+lastid=$(curl localhost:4000/v1/books | jq '.[-1].id')
+
+curl -i -H "$HEADER" -d "$BODY" -X PUT localhost:4000/v1/books/$lastid
+```
+
+### Delete
+```bash
+# delete item
+lastid=$(curl localhost:4000/v1/books | jq '.[-1].id')
+
+curl -X DELETE localhost:4000/v1/books/$lastid
 ```
 
 ### Delete
 ```bash
 # delete item
 curl -X DELETE localhost:4000/v1/books/125
-
-lastid=$(curl localhost:4000/v1/books | jq '.data[-1].id')
-
-curl -X DELETE localhost:4000/v1/books/$lastid
-
 ```
 
 ### Read All
