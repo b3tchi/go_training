@@ -13,7 +13,7 @@ import (
 
 // Declare output port type.
 func (app *application) Healthcheck() usecase.Interactor {
-	u := usecase.NewInteractor(func(ctx context.Context, _ struct{}, output *envelope) error {
+	u := usecase.NewInteractor(func(_ context.Context, _ struct{}, output *envelope) error {
 		data := map[string]string{
 			"status":     "available",
 			"enviroment": app.config.env,
@@ -29,7 +29,7 @@ func (app *application) Healthcheck() usecase.Interactor {
 }
 
 func (app *application) GetBooks() usecase.Interactor {
-	u := usecase.NewInteractor(func(ctx context.Context, _ struct{}, output *envelope) error {
+	u := usecase.NewInteractor(func(_ context.Context, _ struct{}, output *envelope) error {
 		books, err := app.models.Books.GetAll()
 		if err != nil {
 			return status.Internal
@@ -45,13 +45,13 @@ func (app *application) GetBooks() usecase.Interactor {
 func (app *application) CreateBook() usecase.Interactor {
 	type newBook struct {
 		Title     string   `json:"title" required:"true"`
+		Genres    []string `json:"genres"`
 		Published int      `json:"published"`
 		Pages     int      `json:"pages"`
-		Genres    []string `json:"genres"`
 		Rating    float32  `json:"Rating"`
 	}
 
-	u := usecase.NewInteractor(func(ctx context.Context, input newBook, output *envelope) error {
+	u := usecase.NewInteractor(func(_ context.Context, input newBook, output *envelope) error {
 		book := &data.Book{
 			Title:     input.Title,
 			Published: input.Published,
@@ -79,7 +79,7 @@ func (app *application) ReadBook() usecase.Interactor {
 	type getBookID struct {
 		ID string `path:"id"`
 	}
-	u := usecase.NewInteractor(func(ctx context.Context, input getBookID, output *envelope) error {
+	u := usecase.NewInteractor(func(_ context.Context, input getBookID, output *envelope) error {
 		id, err := strconv.ParseInt(input.ID, 10, 64)
 		if err != nil {
 			return status.Wrap(errors.New("bad request"), status.Unavailable)
@@ -103,14 +103,14 @@ func (app *application) ReadBook() usecase.Interactor {
 
 func (app *application) UpdateBook() usecase.Interactor {
 	type updateBook struct {
-		ID        string   `path:"id"`
 		Title     *string  `json:"title"`
 		Published *int     `json:"published"`
 		Pages     *int     `json:"pages"`
-		Genres    []string `json:"genres"`
 		Rating    *float32 `json:"Rating"`
+		ID        string   `path:"id"`
+		Genres    []string `json:"genres"`
 	}
-	u := usecase.NewInteractor(func(ctx context.Context, input updateBook, output *envelope) error {
+	u := usecase.NewInteractor(func(_ context.Context, input updateBook, output *envelope) error {
 		id, err := strconv.ParseInt(input.ID, 10, 64)
 		if err != nil {
 			return status.Wrap(errors.New("bad request"), status.Unavailable)
@@ -158,7 +158,7 @@ func (app *application) DeleteBook() usecase.Interactor {
 	type deleteBookID struct {
 		ID string `path:"id"`
 	}
-	u := usecase.NewInteractor(func(ctx context.Context, input deleteBookID, output *envelope) error {
+	u := usecase.NewInteractor(func(_ context.Context, input deleteBookID, output *envelope) error {
 		id, err := strconv.ParseInt(input.ID, 10, 64)
 		if err != nil {
 			return status.Internal

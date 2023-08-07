@@ -17,15 +17,15 @@ import (
 const version = "1.0.0"
 
 type config struct {
-	port int
 	env  string
 	dsn  string
+	port int
 }
 
 type application struct {
-	config config
 	logger *log.Logger
 	models data.Models
+	config config
 }
 
 func main() {

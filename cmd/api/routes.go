@@ -8,9 +8,9 @@ import (
 func (app *application) route() *web.Service {
 	service := web.DefaultService()
 
-	service.OpenAPI.Info.Title = "Books Database"
-	service.OpenAPI.Info.WithDescription("database to manage books i read")
-	service.OpenAPI.Info.Version = version
+	service.OpenAPISchema().SetTitle("Books Database")
+	service.OpenAPISchema().SetDescription("database to manage books i read")
+	service.OpenAPISchema().SetVersion(version)
 
 	// healthcheck
 	service.Get("/v1/healthcheck", app.Healthcheck())
