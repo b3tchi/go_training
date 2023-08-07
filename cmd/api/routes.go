@@ -1,21 +1,16 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/swaggest/rest/web"
+	"github.com/swaggest/swgui/v4emb"
 )
 
-func (app *application) route() *http.ServeMux {
-	mux := http.NewServeMux()
-	// mux.HandleFunc("/v1/healthcheck", app.healthcheck)
-	// mux.HandleFunc("/v1/books", app.getCreateBooksHandler)
-	// mux.HandleFunc("/v1/books/", app.getUpdateDeleteBooksHandler)
-	return mux
-}
-
-func (app *application) route2() *web.Service {
+func (app *application) route() *web.Service {
 	service := web.DefaultService()
+
+	service.OpenAPI.Info.Title = "Books Database"
+	service.OpenAPI.Info.WithDescription("database to manage books i read")
+	service.OpenAPI.Info.Version = version
 
 	// healthcheck
 	service.Get("/v1/healthcheck", app.Healthcheck())
@@ -28,6 +23,9 @@ func (app *application) route2() *web.Service {
 	service.Get("/v1/books/{id}", app.ReadBook())
 	service.Put("/v1/books/{id}", app.UpdateBook())
 	service.Delete("/v1/books/{id}", app.DeleteBook())
+
+	// docs
+	service.Docs("/docs", v4emb.New)
 
 	return service
 }

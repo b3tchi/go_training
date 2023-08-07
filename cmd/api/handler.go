@@ -24,6 +24,7 @@ func (app *application) Healthcheck() usecase.Interactor {
 
 		return nil
 	})
+	u.SetTags("Health Check")
 	return u
 }
 
@@ -37,6 +38,7 @@ func (app *application) GetBooks() usecase.Interactor {
 		*output = envelope{"data": books}
 		return nil
 	})
+	u.SetTags("Books")
 	return u
 }
 
@@ -66,6 +68,10 @@ func (app *application) CreateBook() usecase.Interactor {
 		*output = envelope{"data": book}
 		return nil
 	})
+
+	u.SetTags("Book")
+	u.SetExpectedErrors(status.Internal)
+
 	return u
 }
 
@@ -91,6 +97,7 @@ func (app *application) ReadBook() usecase.Interactor {
 		*output = envelope{"data": book}
 		return nil
 	})
+	u.SetTags("Book")
 	return u
 }
 
@@ -143,6 +150,7 @@ func (app *application) UpdateBook() usecase.Interactor {
 		*output = envelope{"data": book}
 		return nil
 	})
+	u.SetTags("Book")
 	return u
 }
 
@@ -169,5 +177,6 @@ func (app *application) DeleteBook() usecase.Interactor {
 
 		return nil
 	})
+	u.SetTags("Book")
 	return u
 }
