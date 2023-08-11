@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"flag"
 	"fmt"
 	"log"
@@ -12,6 +11,7 @@ import (
 	_ "github.com/lib/pq"
 
 	"web-hello/internal/data"
+	"web-hello/internal/db"
 )
 
 const version = "1.0.0"
@@ -38,24 +38,17 @@ func main() {
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
-	db, err := sql.Open("postgres", cfg.dsn)
+	conn, err := db.InitDB(cfg.dsn)
 	if err != nil {
 		logger.Fatal(err)
 	}
 
-	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		logger.Fatal(err)
-	}
-
-	logger.Print("database connection pool estabilished")
+	defer conn.Close()
 
 	app := &application{
 		config: cfg,
 		logger: logger,
-		models: data.NewModels(db),
+		models: data.NewModels(db.GetDB()),
 	}
 
 	addr := fmt.Sprintf(":%d", cfg.port)

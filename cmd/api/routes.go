@@ -3,6 +3,8 @@ package main
 import (
 	"github.com/swaggest/rest/web"
 	"github.com/swaggest/swgui/v4emb"
+
+	"web-hello/cmd/api/books"
 )
 
 func (app *application) route() *web.Service {
@@ -16,7 +18,8 @@ func (app *application) route() *web.Service {
 	service.Get("/v1/healthcheck", app.Healthcheck())
 
 	// collection
-	service.Get("/v1/books", app.GetBooks())
+	// service.Get("/v1/books", app.GetBooks())
+	service.Get("/v1/books", books.GetBooks())
 
 	// item
 	service.Post("/v1/books", app.CreateBook())
