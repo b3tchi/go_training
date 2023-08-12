@@ -7,8 +7,8 @@ import (
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 
-	"web-hello/internal/data"
 	"web-hello/internal/db"
+	"web-hello/internal/dto"
 )
 
 // Controller
@@ -21,8 +21,8 @@ func Create() usecase.Interactor {
 		Rating    float32  `json:"Rating"`
 	}
 
-	u := usecase.NewInteractor(func(_ context.Context, input newBook, output *data.Book) error {
-		book := &data.Book{
+	u := usecase.NewInteractor(func(_ context.Context, input newBook, output *dto.Book) error {
+		book := &dto.Book{
 			Title:     input.Title,
 			Published: input.Published,
 			Pages:     input.Pages,
@@ -47,7 +47,7 @@ func Create() usecase.Interactor {
 }
 
 // Handler
-func create(book *data.Book) error {
+func create(book *dto.Book) error {
 	query := `
   INSERT INTO books (title, published, pages, genres, rating)
   VALUES ($1, $2, $3, $4, $5)

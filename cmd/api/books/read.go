@@ -10,8 +10,8 @@ import (
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 
-	"web-hello/internal/data"
 	"web-hello/internal/db"
+	"web-hello/internal/dto"
 )
 
 // Controller
@@ -19,7 +19,7 @@ func Read() usecase.Interactor {
 	type getBookID struct {
 		ID string `path:"id"`
 	}
-	u := usecase.NewInteractor(func(_ context.Context, input getBookID, output *data.Book) error {
+	u := usecase.NewInteractor(func(_ context.Context, input getBookID, output *dto.Book) error {
 		id, err := strconv.ParseInt(input.ID, 10, 64)
 		if err != nil {
 			return status.Wrap(errors.New("bad request"), status.Unavailable)
@@ -42,7 +42,7 @@ func Read() usecase.Interactor {
 }
 
 // Handler
-func get(id int64) (*data.Book, error) {
+func get(id int64) (*dto.Book, error) {
 	if id < 1 {
 		return nil, errors.New("record not found")
 	}
@@ -53,7 +53,7 @@ func get(id int64) (*data.Book, error) {
   WHERE id = $1
   `
 
-	var book data.Book
+	var book dto.Book
 
 	conn := db.GetDB()
 	err := conn.QueryRow(query, id).Scan(

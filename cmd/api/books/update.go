@@ -9,8 +9,8 @@ import (
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 
-	"web-hello/internal/data"
 	"web-hello/internal/db"
+	"web-hello/internal/dto"
 )
 
 // controler
@@ -23,7 +23,7 @@ func Update() usecase.Interactor {
 		ID        string   `path:"id"`
 		Genres    []string `json:"genres"`
 	}
-	u := usecase.NewInteractor(func(_ context.Context, input updateBook, output *data.Book) error {
+	u := usecase.NewInteractor(func(_ context.Context, input updateBook, output *dto.Book) error {
 		id, err := strconv.ParseInt(input.ID, 10, 64)
 		if err != nil {
 			return status.Wrap(errors.New("bad request"), status.Unavailable)
@@ -68,7 +68,7 @@ func Update() usecase.Interactor {
 }
 
 // handler
-func update(book *data.Book) error {
+func update(book *dto.Book) error {
 	query := `
     UPDATE books SET title = $1
       , published = $2
