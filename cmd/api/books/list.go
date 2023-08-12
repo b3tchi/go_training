@@ -7,13 +7,13 @@ import (
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 
-	d "web-hello/internal/data"
+	"web-hello/internal/data"
 	"web-hello/internal/db"
 )
 
 // Controller
-func GetBooks() usecase.Interactor {
-	u := usecase.NewInteractor(func(_ context.Context, _ struct{}, output *[]*d.Book) error {
+func List() usecase.Interactor {
+	u := usecase.NewInteractor(func(_ context.Context, _ struct{}, output *[]*data.Book) error {
 		books, err := getAll()
 		if err != nil {
 			return status.Internal
@@ -27,7 +27,7 @@ func GetBooks() usecase.Interactor {
 }
 
 // Handler
-func getAll() ([]*d.Book, error) {
+func getAll() ([]*data.Book, error) {
 	query := `
     SELECT *
   FROM books
@@ -38,11 +38,12 @@ func getAll() ([]*d.Book, error) {
 	if err != nil {
 		return nil, err
 	}
-	// defer rows.Close()
 
-	books := []*d.Book{}
+	defer rows.Close()
+
+	books := []*data.Book{}
 	for rows.Next() {
-		var book d.Book
+		var book data.Book
 		err := rows.Scan(
 			&book.ID,
 			&book.CreatedAt,
