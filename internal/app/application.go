@@ -56,6 +56,8 @@ func healthcheck() usecase.Interactor {
 		conn := db.GetDB()
 		err := conn.Ping()
 		if err != nil {
+			ping = "no-ok"
+		} else {
 			ping = "ok"
 		}
 
