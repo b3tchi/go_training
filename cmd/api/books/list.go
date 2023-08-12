@@ -7,8 +7,8 @@ import (
 	"github.com/swaggest/usecase"
 	"github.com/swaggest/usecase/status"
 
+	"web-hello/cmd/api/dto"
 	"web-hello/internal/db"
-	"web-hello/internal/dto"
 )
 
 // Controller
