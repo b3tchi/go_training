@@ -5,6 +5,7 @@ import (
 	"github.com/swaggest/swgui/v4emb"
 
 	"web-hello/cmd/api/books"
+	"web-hello/cmd/api/page"
 )
 
 func (app *application) Route() *web.Service {
@@ -14,6 +15,7 @@ func (app *application) Route() *web.Service {
 	service.OpenAPISchema().SetDescription("database to manage books i read")
 	service.OpenAPISchema().SetVersion(app.Version)
 
+	service.Get("/", page.HtmlResponse())
 	// healthcheck
 	service.Get("/v1/healthcheck", healthcheck())
 
