@@ -9,8 +9,16 @@ import (
 )
 
 type htmlResponseOutput struct {
-	AntiHeader bool `header:"X-Anti-Header"`
 	writer     io.Writer
+	Filter     string
+	Title      string
+	Items      []string
+	ID         int
+	AntiHeader bool `header:"X-Anti-Header"`
+}
+
+func (o *htmlResponseOutput) SetWriter(w io.Writer) {
+	o.writer = w
 }
 
 func (o *htmlResponseOutput) Render(tmpl *template.Template) error {
@@ -19,34 +27,22 @@ func (o *htmlResponseOutput) Render(tmpl *template.Template) error {
 
 func HtmlResponse() usecase.Interactor {
 	type htmlResponseInput struct {
-		ID     int    `path:"id"`
 		Filter string `query:"filter"`
+		ID     int    `path:"id"`
 		Header bool   `header:"X-Header"`
 	}
 
-	const tpl = `<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<title>{{.Title}}</title>
-	</head>
-	<body>
-		<a href="/html-response/{{.ID}}?filter={{.Filter}}">Next {{.Title}}</a><br />
-		{{range .Items}}<div>{{ . }}</div>{{else}}<div><strong>no rows</strong></div>{{end}}
-	</body>
-</html>`
-
-	tmpl, err := template.New("htmlResponse").Parse(tpl)
+	tmpl, err := template.New("index.html").ParseFiles("./cmd/api/page/index.html")
 	if err != nil {
 		panic(err)
 	}
 
-	u := usecase.NewInteractor(func(ctx context.Context, _ struct{}, out *htmlResponseOutput) (err error) {
-		out.AntiHeader = true
-		// out.Filter = in.Filter
-		// out.ID = in.ID + 1
-		// out.Title = "Foo"
-		// out.Items = []string{"foo", "bar", "baz"}
+	u := usecase.NewInteractor(func(_ context.Context, in htmlResponseInput, out *htmlResponseOutput) (err error) {
+		out.AntiHeader = !in.Header
+		out.Filter = in.Filter
+		out.ID = in.ID + 1
+		out.Title = "Foo"
+		out.Items = []string{"foo", "bar", "baz"}
 
 		return out.Render(tmpl)
 	})
@@ -57,31 +53,3 @@ func HtmlResponse() usecase.Interactor {
 
 	return u
 }
-
-// 	u := usecase.NewInteractor(func(ctx context.Context, in htmlResponseInput, out *htmlResponseOutput) (err error) {
-// 		out.AntiHeader = !in.Header
-// 		out.Filter = in.Filter
-// 		out.ID = in.ID + 1
-// 		out.Title = "Foo"
-// 		out.Items = []string{"foo", "bar", "baz"}
-//
-// 		return out.Render(tmpl)
-// 	})
-//
-// 	u.SetTitle("Request With HTML Response")
-// 	u.SetDescription("Request with templated HTML response.")
-// 	u.SetTags("Response")
-//
-// 	return u
-// }
-// func Page() usecase.Interactor {
-// 	u := usecase.NewInteractor(func(_ context.Context, _ struct{}, output *http.ResponseWriter) error {
-// 		templ := template.Must(template.ParseFiles("./cmd/api/page/index.html"))
-// 		templ.Execute(*output, nil)
-//
-// 		// *output = books
-// 		return nil
-// 	})
-// 	u.SetTags("Books")
-// 	return u
-// }
