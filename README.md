@@ -6,6 +6,9 @@ go mod init web-test
 
 ## install external database dependency
 ```bash
+#get all dependencies
+# go get -d ./...
+#get particular folder
 go get github.com/lib/pq
 ```
 
