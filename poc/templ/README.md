@@ -1,4 +1,4 @@
-# install
+# install & run
 
 ```bash
 # go to this folder
